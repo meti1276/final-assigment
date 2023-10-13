@@ -1,0 +1,57 @@
+public class Author
+{
+    public int AuthorId { get; set; }
+    public string Name { get; set; }
+
+    public ICollection<Book> Books { get; set; }
+}
+
+public class Book
+{
+    public int BookId { get; set; }
+    public string Title { get; set; }
+
+    public int AuthorId { get; set; }
+    public Author Author { get; set; }
+}
+
+using System;
+
+public class Student
+{
+    public int StudentId { get; set; }
+    public string Name { get; set; }
+    public DateTime EnrollmentDate { get; set; }
+}
+
+using Microsoft.EntityFrameworkCore;
+
+public class StudentDbContext : DbContext
+{
+    public DbSet<Student> Students { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Your_Connection_String_Here");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        using (var context = new StudentDbContext())
+        {
+            context.Database.EnsureCreated();
+
+            var student = new Student
+            {
+                Name = "Ismet Kerqeli",
+                EnrollmentDate = DateTime.Now
+            };
+
+            context.Students.Add(student);
+            context.SaveChanges();
+        }
+    }
+}
